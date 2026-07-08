@@ -4,6 +4,7 @@ from src.masks import get_mask_card_number, get_mask_account
 
 # Тесты для get_mask_card_number
 
+
 def test_get_mask_card_number_correct():
     assert get_mask_card_number("1234567812345678") == "1234 56** **** 5678"
 

@@ -9,10 +9,10 @@ def mask_account_card(info: str) -> str:
     label = " ".join(parts[:-1])
     number = parts[-1]
 
-    if len(number) >= 16:
-        masked = get_mask_card_number(number)
-    else:
+    if len(number) >= 20:
         masked = get_mask_account(number)
+    else:
+        masked = get_mask_card_number(number)
 
     return f"{label} {masked}"
 

@@ -2,7 +2,9 @@
 name = "pythonprojectgit"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = [
+    {name = "Артур", email = "usmanov911@gmail.com"}
+]
 packages = [
     { include = "src" }
 ]

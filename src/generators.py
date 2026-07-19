@@ -8,12 +8,10 @@ def filter_by_currency(transactions: list[dict], currency_code: str):
         # мы должны вернуть пустой генератор.
         return iter([])
 
-
     return (
-        t for t in transactions
-        if t.get("operationAmount", {})
-           .get("currency", {})
-           .get("code") == currency_code
+        t
+        for t in transactions
+        if t.get("operationAmount", {}).get("currency", {}).get("code") == currency_code
     )
 
 
@@ -40,5 +38,5 @@ def card_number_generator(start=1, stop=9_999_999_999_999_999):
     for number in range(start, stop):
         # Делаем красивую строку из числа
         formatted = f"{number:016d}"  # Добавляет нули слева
-        parts = [formatted[i:i + 4] for i in range(0, 16, 4)]
+        parts = [formatted[i : i + 4] for i in range(0, 16, 4)]
         yield " ".join(parts)

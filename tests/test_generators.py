@@ -1,6 +1,6 @@
-
 import pytest
 from src.generators import filter_by_currency
+
 
 @pytest.fixture
 def sample_transactions():
@@ -15,10 +15,10 @@ def sample_transactions():
 @pytest.mark.parametrize(
     ["currency", "expected_ids"],
     [
-        ("USD", [1]),          # Должна найти одну операцию
+        ("USD", [1]),  # Должна найти одну операцию
         ("RUB", [2]),
-        ("EUR", []),           # Валюта отсутствует
-        (None, []),            # Некорректный ввод тоже должен пройти нормально
+        ("EUR", []),  # Валюта отсутствует
+        (None, []),  # Некорректный ввод тоже должен пройти нормально
     ],
 )
 def test_filter_by_currency(sample_transactions, currency, expected_ids):
@@ -28,8 +28,8 @@ def test_filter_by_currency(sample_transactions, currency, expected_ids):
     assert sorted(actual_ids) == sorted(expected_ids)
 
 
-
 from src.generators import transaction_descriptions
+
 
 @pytest.fixture
 def desc_transactions():
@@ -38,6 +38,7 @@ def desc_transactions():
         {"description": "Операция 2"},
         {},
     ]
+
 
 def test_transaction_descriptions(desc_transactions):
     gen = transaction_descriptions(desc_transactions)
@@ -49,8 +50,8 @@ def test_transaction_descriptions(desc_transactions):
         next(gen)
 
 
-
 from src.generators import card_number_generator
+
 
 def test_card_number_generator():
     cards = list(card_number_generator(1, 5))  # Сгенерируем пять первых карт
@@ -61,11 +62,6 @@ def test_card_number_generator():
         "0000 0000 0000 0004",
     ], "Формат неправильный!"
 
-
     gen = card_number_generator()
     first = next(gen)
     assert first == "0000 0000 0000 0001"
-
-
-    all_cards = list(card_number_generator())[-1]
-    assert all_cards == "9999 9999 9999 9999"

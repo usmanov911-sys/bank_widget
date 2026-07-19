@@ -27,3 +27,24 @@ def test_filter_by_currency(sample_transactions, currency, expected_ids):
     actual_ids = [t["id"] for t in filtered]
     assert sorted(actual_ids) == sorted(expected_ids)
 
+
+
+from src.generators import transaction_descriptions
+
+@pytest.fixture
+def desc_transactions():
+    return [
+        {"description": "Операция 1"},
+        {"description": "Операция 2"},
+        {},  # Здесь описания нет!
+    ]
+
+def test_transaction_descriptions(desc_transactions):
+    gen = transaction_descriptions(desc_transactions)
+    # Берем первые два элемента
+    assert next(gen) == "Операция 1"
+    assert next(gen) == "Операция 2"
+    # Третий элемент вызвать нельзя, т.к. описания нет -> ошибка StopIteration
+    with pytest.raises(StopIteration):
+        next(gen)
+

@@ -62,8 +62,13 @@ def test_card_number_generator():
         "0000 0000 0000 0005",
     ], "Формат неправильный!"
 
-    # Проверим крайние значения
-    first = next(card_number_generator())
-    last = next(card_number_generator(stop=9_999_999_999_999_999))
+    # Проверим крайние значения БЕЗ создания двух разных генераторов
+    gen = card_number_generator()          # Берем первый номер
+    first = next(gen)
     assert first == "0000 0000 0000 0001"
-    assert last == "9999 9999 9999 9999"
+
+    # Чтобы взять последний, нужно пройтись до конца всего диапазона
+    # Мы знаем, что диапазон по умолчанию идет до max_int
+    # Поэтому создадим полный список и возьмем его конец
+    all_cards = list(card_number_generator())[-1]
+    assert all_cards == "9999 9999 9999 9999"

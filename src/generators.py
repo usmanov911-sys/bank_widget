@@ -10,3 +10,11 @@ def filter_by_currency(transactions, currency_code):
         transaction for transaction in transactions
         if transaction.get("operationAmount", {}).get("currency", {}).get("code") == currency_code
     )
+
+
+def transaction_descriptions(transactions):
+    """
+    Эта функция берёт список операций и по очереди отдает их описания.
+    """
+    for operation in transactions:
+        yield operation["description"]

@@ -48,3 +48,22 @@ def test_transaction_descriptions(desc_transactions):
     with pytest.raises(StopIteration):
         next(gen)
 
+
+
+from src.generators import card_number_generator
+
+def test_card_number_generator():
+    cards = list(card_number_generator(1, 5))  # Сгенерируем пять первых карт
+    assert cards == [
+        "0000 0000 0000 0001",
+        "0000 0000 0000 0002",
+        "0000 0000 0000 0003",
+        "0000 0000 0000 0004",
+        "0000 0000 0000 0005",
+    ], "Формат неправильный!"
+
+    # Проверим крайние значения
+    first = next(card_number_generator())
+    last = next(card_number_generator(stop=9_999_999_999_999_999))
+    assert first == "0000 0000 0000 0001"
+    assert last == "9999 9999 9999 9999"

@@ -3,8 +3,7 @@ from typing import Any
 
 
 def filter_by_state(
-    operations: list[dict[str, Any]],
-    state: str = "EXECUTED"
+    operations: list[dict[str, Any]], state: str = "EXECUTED"
 ) -> list[dict[str, Any]]:
     """
     Фильтрует операции по статусу.
@@ -16,17 +15,10 @@ def filter_by_state(
     Returns:
         Список операций с указанным статусом.
     """
-    return [
-        operation
-        for operation in operations
-        if operation.get("state") == state
-    ]
+    return [operation for operation in operations if operation.get("state") == state]
 
 
-def sort_by_date(
-    operations: list[dict[str, Any]],
-    reverse: bool = True
-) -> list[dict[str, Any]]:
+def sort_by_date(operations: list[dict[str, Any]], reverse: bool = True) -> list[dict[str, Any]]:
     """
     Сортирует операции по дате.
 
@@ -38,7 +30,5 @@ def sort_by_date(
         Отсортированный список операций.
     """
     return sorted(
-        operations,
-        key=lambda operation: datetime.fromisoformat(operation["date"]),
-        reverse=reverse
+        operations, key=lambda operation: datetime.fromisoformat(operation["date"]), reverse=reverse
     )

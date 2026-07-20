@@ -21,6 +21,7 @@ def test_get_mask_card_number_invalid_length_long():
 
 # Тесты для get_mask_account
 
+
 def test_get_mask_account_correct():
     assert get_mask_account("1234567890") == "**7890"
 

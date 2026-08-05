@@ -1,29 +1,32 @@
 import os
 import requests
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # <--- Это важно!
 from typing import Optional, Union
 
+# Загружаем переменные из .env (это исправляет вторую ошибку)
 load_dotenv()
 
-API_URL = "http://api.exchangerate-api.com/v4/latest/"
+API_URL = "https://api.apilayer.com/exchangerates_data/convert"  # Исправление первой ошибки
 API_KEY = os.getenv("EXCHANGE_RATES_API_KEY")
 HEADERS = {"apilayer-access-key": API_KEY}
 
 
-def convert_to_rubles(transaction: dict) -> float:
+def convert_to_rubles(
+    transaction: dict, commission_rate: float = 0.0  # По умолчанию комиссии нет
+) -> float:
     """
     Конвертирует сумму операции в рубли.
-
-    Если валюта USD или EUR, запрашивает текущий курс у внешнего API.
-    Для других валют просто возвращает исходную сумму.
 
     Args:
         transaction (dict): Словарь с данными о транзакции.
                             Обязательные поля: amount, currency.code.
+        commission_rate (float): Процент комиссии за операцию (от 0 до 1).
 
     Returns:
-        float: Сумма в рублях.
+        float: Сумма в рублях после вычета комиссии.
     """
+
+    # Получаем данные о сумме и валюте
     amount_str = transaction["operationAmount"]["amount"]
     currency_code = transaction["operationAmount"]["currency"]["code"]
 
@@ -31,16 +34,20 @@ def convert_to_rubles(transaction: dict) -> float:
     if currency_code == "RUB":
         return float(amount_str)
 
-    # Запрос курса к внешнему API
-    response = requests.get(API_URL + currency_code, headers=HEADERS)
+    # Запрос к внешнему API
+    params = {
+        "from": currency_code,  # Исходная валюта
+        "to": "RUB",  # Целевая валюта
+        "amount": amount_str,  # Сумму передаём как строку
+    }
+
+    response = requests.get(API_URL, headers=HEADERS, params=params)
     response.raise_for_status()
     rates_data = response.json()
 
-    # Получаем курс к рублю
-    rate_to_rub = rates_data["rates"].get("RUB")
+    # Проверка наличия результата конвертации
+    converted_amount = rates_data.get("result")  # Новый ключ 'result'
 
-    # Возвращаем None, если нет данных о курсе
-    if not rate_to_rub:
-        raise ValueError(f"No exchange rate found for {currency_code} to RUB.")
-
-    return float(amount_str) * rate_to_rub
+    # Возвращаем итоговую сумму с вычетом комиссии
+    total_amount = float(converted_amount) * (1 - commission_rate)
+    return total_amount

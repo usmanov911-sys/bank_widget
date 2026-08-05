@@ -18,10 +18,15 @@ def sample_transaction_usd():
 def test_convert_usd(mock_get, sample_transaction_usd):
     mock_response = mock_get.return_value
     mock_response.status_code = 200
-    mock_response.json.return_value = {"base": "USD", "rates": {"RUB": 90.0}}
 
-    result = convert_to_rubles(sample_transaction_usd)
-    assert round(result, 2) == 9045.00  # 100.50 * 90
+    mock_response.json.return_value = {
+        "success": True,
+        "query": {"from": "USD", "to": "RUB", "amount": 100.5},
+        "result": 9045.00,
+    }
+
+    result = convert_to_rubles(sample_transaction_usd, commission_rate=0)
+    assert round(result, 2) == 9045.00
 
 
 @patch("requests.get")

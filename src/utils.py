@@ -1,4 +1,3 @@
-
 import json
 from typing import List, Dict
 
@@ -27,4 +26,3 @@ def load_json_file(file_path: str) -> List[Dict]:
         return []
     except json.JSONDecodeError:
         return []
-

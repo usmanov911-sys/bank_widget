@@ -16,7 +16,6 @@ def log(filename=None):
         def wrapper(*args, **kwargs):
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-
             func_name = f"{func.__name__}"
             message_start = f"[{timestamp}] {func_name} started"
             if filename is not None:
@@ -25,10 +24,8 @@ def log(filename=None):
             else:
                 print(message_start)
 
-
             try:
                 result = func(*args, **kwargs)
-
 
                 message_end = f"[{timestamp}] {func_name} ok"
 

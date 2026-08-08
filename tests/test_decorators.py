@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import pytest
 from src.decorators import log
+from typing import Any
 
 
 @pytest.fixture(scope="function")
@@ -75,4 +76,4 @@ def test_log_catches_errors(tmp_log_file: str) -> None:
 
     assert "failing_function error:" in content
     assert "ValueError" in content
-    assert "(args=(-1,)" in content 
+    assert "(args=(-1,)" in content

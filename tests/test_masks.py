@@ -23,11 +23,11 @@ def test_get_mask_card_number_invalid_length_long():
 
 
 def test_get_mask_account_correct():
-    assert get_mask_account("1234567890") == "**7890"
+    assert get_mask_account("1234567890") == "******7890"
 
 
 def test_get_mask_account_exactly_four_digits():
-    assert get_mask_account("1234") == "**1234"
+    assert get_mask_account("1234") == "1234"
 
 
 def test_get_mask_account_too_short():

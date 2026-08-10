@@ -13,6 +13,34 @@
   - Фильтр транзакций по валюте — filter_by_currency()
   - Генерация описаний операций — transaction_descriptions()
   - Генерация номеров банковских карт — card_number_generator(start=..., stop=...)
+- Новая функциональность: поддержка чтения данных из файлов разных форматов (JSON, CSV, XLSX) через модуль src/data_loader.
+## Новая функциональность: работа с разными форматами данных
+В рамках развития проекта реализована загрузка данных о транзакциях не только из JSON-файла, но и из табличных форматов.
+
+Для этого создан отдельный модуль src/data_loader.py, который содержит функции:
+- load_csv_file(file_path) — читает данные из файла формата .csv. Принимает путь к файлу как аргумент и возвращает список словарей.
+- load_excel_file(file_path) — читает данные из файла формата .xlsx или .xls. Также принимает путь к файлу и возвращает список словарей.
+
+Библиотеки pandas и openpyxl добавлены в зависимости проекта.
+```
+Примечание: примеры данных для работы с этими функциями можно найти в папке /data/:  
+- transactions.csv  
+- transactions_excel.xlsx
+```
+## Пример использования нового модуля:
+
+```python
+from src.data_loader import load_csv_file, load_excel_file
+
+# Загрузка данных из CSV
+csv_data = load_csv_file("./data/transactions.csv")
+print(f"Загружено {len(csv_data)} записей из CSV.")
+
+# Загрузка данных из Excel
+excel_data = load_excel_file("./data/transactions_excel.xlsx")
+print(f"Загружено {len(excel_data)} записей из Excel.")
+```
+(Обратите внимание, что структура данных во всех трёх случаях идентична — это список словарей, поэтому вы можете использовать одни и те же функции обработки независимо от источника). 
 ## Установка
 
 Для установки зависимостей используется Poetry.
@@ -23,6 +51,12 @@
 
 poetry install
 ````
+Запустите тесты:
+```bash
+
+pytest --cov=src --cov-report=html
+```
+Покрытие должно быть более 80%.
 
 ## Использование функций
 
@@ -31,32 +65,32 @@ poetry install
 ```python
 from src.processing import filter_by_state, sort_by_date
 from src.generators import card_number_generator, transaction_descriptions, filter_by_currency
+from src.data_loader import load_json_file, load_csv_file
 
-transactions = [
-    {
-        "id": 939719570,
-        "state": "EXECUTED",
-        "date": "2018-06-30T02:08:58.425572",
-        "operationAmount": {"amount": "9824.07", "currency": {"name": "USD"}},
-        "description": "Перевод организации"
-    },
-    # ... другие операции ...
-]
+# Загрузим данные из любого формата
+json_data = load_json_file("./data/operations.json") # Старый способ
+csv_data = load_csv_file("./data/transactions.csv") # Новый способ
 
-# Старый функционал + Генератор №1: отфильтруем только выполненные USD-транзакции
-usd_executed = filter_by_state(list(filter_by_currency(transactions, currency_code="USD")))
-for operation in usd_executed:
-    print(f"Операция {operation['id']} выполнена.")
+# Объединяем все наборы данных
+all_transactions = json_data + csv_data
 
-# Новый функционал №2: получим описания первых двух операций
-descriptions = transaction_descriptions(transactions)
+# Отфильтруем только выполненные USD-транзакции
+usd_executed = list(filter_by_state(
+    filter_by_currency(all_transactions, currency_code="USD"),
+    state="EXECUTED"
+))
+for operation in usd_executed[:3]:
+    print(operation["description"])
+
+# Получим описания первых двух операций
+descriptions = transaction_descriptions(all_transactions)
 print("Первые два описания:")
-print(next(descriptions))
-print(next(descriptions))
+print(next(descriptions))  # "Перевод организации"
+print(next(descriptions))  # "Пополнение счёта"
 
-# Новый функционал №3: генерируем номера карт
+# Генерируем номера карт
 print("\nПять случайных номеров карт:")
-for number in card_number_generator(1_000_000, 1_000_005):  
+for number in card_number_generator(1_000_000, 1_000_005):
     print(number)  # Выведет пять красивых номеров карт
 ```
 ## Модуль decorators

@@ -18,15 +18,13 @@ def load_csv_file(file_path: str) -> List[Dict]:
     """
 
     try:
-        # Читаем CSV-файл через pandas
         df = pd.read_csv(
             file_path,
-            sep=",",  # Разделитель столбцов
-            header=0,  # Первая строка — заголовки колонок
-            dtype=str,  # Все колонки читаем как строки
+            sep=",",
+            header=0,
+            dtype=str,
         )
 
-        # Конвертируем табличные данные обратно в тот же формат списка словарей
         return df.to_dict(orient="records")
 
     except FileNotFoundError:
